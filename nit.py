@@ -48,6 +48,29 @@ def install_package(package_name):
     else:
         print(f"(×) Package '{package_name}' not found.")
 
+def install_package_by_version(package_name,wantversion):
+    repo = load_repository()
+    package = repo['packages'].get(package_name)
+    if package:
+        system_platform = platform.system().lower()
+        for version, details in package['versions'].items():
+
+            if wantversion == version:
+
+                if system_platform in [p.lower() for p in details['platforms']]:
+                    os.system(f"curl -LO {details['url']}")
+                    if details['type'] == 'binary':
+                        os.system(f"chmod +x {os.path.basename(details['url'])}")
+                        os.system(f"./{os.path.basename(details['url'])}")
+                        os.remove(f"./{os.path.basename(details['url'])}")
+                    print(f"(+) Package '{package_name}' installed.")
+                    return
+            
+
+        print(f"(×) No compatible version found for platform '{system_platform}'.")
+    else:
+        print(f"(×) Package '{package_name}' not found.")
+
 def uninstall_package(package_name):
     repo = load_repository()
     package = repo['packages'].get(package_name)
@@ -76,7 +99,22 @@ if __name__ == "__main__":
         if command == "info":
             package_info(package_name)
         elif command == "install":
-            install_package(package_name)
+
+            i = 2
+            while True:
+                
+                if ( len(sys.argv) ) > ( i + 1 ):
+                    print(f"(#) install {sys.argv[i]} V{sys.argv[i+1]}")
+                    install_package_by_version(sys.argv[i],sys.argv[i+1])
+                    i += 2
+                else:
+                    print(f"(#) install {sys.argv[i]}")
+                    install_package(sys.argv[i])
+                    i += 1
+
+                if i >= len(sys.argv):
+                    break
+
         elif command == "uninstall":
             uninstall_package(package_name)
         else:
