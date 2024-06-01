@@ -11,3 +11,15 @@ If you need Add Package to Official Index, Please Create Issues or Pull requests
 ```
 python nit.py install <package_name>
 ```
+or
+```
+python nit.py install <package_name> <version>
+```
+or
+```
+python nit.py install <package_name> <version> <package_name> <version> ...
+```
+or
+```
+python nit.py install <package_name> <package_name> <package_name> ...
+```
