@@ -1,4 +1,4 @@
-# NIT
+# Next-in-the Installer
 "Next-in-the (NIT)" Installer is Simple Package Manager for Python.
 
 ## HTI
