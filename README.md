@@ -4,6 +4,9 @@
 ## HTI
 NIT using [HTI Package Index](https://github.com/DiamondGotCat/HTI).
 
+## How to install NIT?
+- Download nit.py from [Releases](https://github.com/DiamondGotCat/NIT/releases)
+
 ## How to Add Package to Official Index?
 If you need Add Package to Official Index, Please Create Issues or Pull requests on the HTI Repository.
 
