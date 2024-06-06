@@ -30,17 +30,17 @@ If you need Add Package to Official Index, Please Create Issues or Pull requests
 
 ## How to Install HTI Package?
 ```
-python nit.py install <package_name>
+python3 nit.py install <package_name>
 ```
 or
 ```
-python nit.py install <package_name> <version>
+python3 nit.py install <package_name> <version>
 ```
 or
 ```
-python nit.py install <package_name> <version> <package_name> <version> ...
+python3 nit.py install <package_name> <version> <package_name> <version> ...
 ```
 or
 ```
-python nit.py install <package_name> <package_name> <package_name> ...
+python3 nit.py install <package_name> <package_name> <package_name> ...
 ```
