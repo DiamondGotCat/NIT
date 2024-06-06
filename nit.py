@@ -104,37 +104,68 @@ def uninstall_package(package_name):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python nit.py <command> <package>")
-        sys.exit(1)
+        
+        command = input("mode(info|install|uninstall): ")
+        package_name = input("package-name: ")
+        
+        try:
     
-    command = sys.argv[1]
-    package_name = sys.argv[2]
+            if command == "info":
+                package_info(package_name)
+            elif command == "install":
     
-    try:
-
-        if command == "info":
-            package_info(package_name)
-        elif command == "install":
-
-            i = 2
-            while True:
-                
-                if ( len(sys.argv) ) > ( i + 1 ):
-                    print(f"{ColorCodes['Cyan']}(#) install {sys.argv[i]} V{sys.argv[i+1]}{ColorCodes['Reset']}")
-                    install_package_by_version(sys.argv[i],sys.argv[i+1])
-                    i += 2
-                else:
-                    print(f"{ColorCodes['Cyan']}(#) install {sys.argv[i]}{ColorCodes['Reset']}")
-                    install_package(sys.argv[i])
-                    i += 1
-
-                if i >= len(sys.argv):
-                    break
-
-        elif command == "uninstall":
-            uninstall_package(package_name)
-        else:
-            print(f"{ColorCodes['Red']}(×) Unknown command '{command}'{ColorCodes['Reset']}")
-
-    except KeyError:
-        pass
+                i = 2
+                while True:
+                    
+                    if ( len(sys.argv) ) > ( i + 1 ):
+                        print(f"{ColorCodes['Cyan']}(#) install {sys.argv[i]} V{sys.argv[i+1]}{ColorCodes['Reset']}")
+                        install_package_by_version(sys.argv[i],sys.argv[i+1])
+                        i += 2
+                    else:
+                        print(f"{ColorCodes['Cyan']}(#) install {sys.argv[i]}{ColorCodes['Reset']}")
+                        install_package(sys.argv[i])
+                        i += 1
+    
+                    if i >= len(sys.argv):
+                        break
+    
+            elif command == "uninstall":
+                uninstall_package(package_name)
+            else:
+                print(f"{ColorCodes['Red']}(×) Unknown command '{command}'{ColorCodes['Reset']}")
+    
+        except KeyError:
+            pass
+        
+    else:
+        command = sys.argv[1]
+        package_name = sys.argv[2]
+        
+        try:
+    
+            if command == "info":
+                package_info(package_name)
+            elif command == "install":
+    
+                i = 2
+                while True:
+                    
+                    if ( len(sys.argv) ) > ( i + 1 ):
+                        print(f"{ColorCodes['Cyan']}(#) install {sys.argv[i]} V{sys.argv[i+1]}{ColorCodes['Reset']}")
+                        install_package_by_version(sys.argv[i],sys.argv[i+1])
+                        i += 2
+                    else:
+                        print(f"{ColorCodes['Cyan']}(#) install {sys.argv[i]}{ColorCodes['Reset']}")
+                        install_package(sys.argv[i])
+                        i += 1
+    
+                    if i >= len(sys.argv):
+                        break
+    
+            elif command == "uninstall":
+                uninstall_package(package_name)
+            else:
+                print(f"{ColorCodes['Red']}(×) Unknown command '{command}'{ColorCodes['Reset']}")
+    
+        except KeyError:
+            pass
