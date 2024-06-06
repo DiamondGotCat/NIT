@@ -4,9 +4,9 @@
 ## HTI
 NIT using [HTI Package Index](https://github.com/DiamondGotCat/HTI).
 
-## How to install NIT?
+## How to start NIT?
 
-### Installer (macOS/Linux)
+### Runner (macOS/Linux)
 ```bash
 /bin/bash -c "$(curl -fsSL https://diamondgotcat.github.io/NIT/install.sh)"
 ```
