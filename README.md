@@ -8,7 +8,9 @@ NIT using [HTI Package Index](https://github.com/DiamondGotCat/HTI).
 
 ### macOS
 Tested macOS: 14.4.1
+|
 Tested Python: 3.10.6
+|
 Tested PIP: 22.2.1
 
 ### Linux
