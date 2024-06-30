@@ -16,6 +16,9 @@ Tested PIP: 22.2.1
 ### Linux
 Not tested, but should work.
 
+## Required Libraries
+- requests
+
 ## How to start NIT?
 
 ### Runner (macOS/Linux)
