@@ -3,6 +3,9 @@ import sys
 import os
 import platform
 import requests
+import argparse
+import time
+from KamuJpModern import KamuJpModern
 
 GITHUB_REPO_URL = 'https://diamondgotcat.github.io/HTI/packages.json'
 
@@ -18,6 +21,75 @@ ColorCodes = {
     "Bold": "\033[1m"
 
 }
+
+class Downloader:
+    ONE_MB = 1024 * 1024
+
+    def __init__(self):
+        self.total_downloaded = 0
+        self.progress_bar = KamuJpModern().modernProgressBar(
+            total=0,
+            process_name="Downloading",
+            process_color=32
+        )
+        self.start_time = time.time()
+        self.logger = KamuJpModern().modernLogging(process_name="Downloader")
+
+    def get_file_size(self, url):
+        try:
+            response = requests.head(url, allow_redirects=True)
+            response.raise_for_status()
+            file_size = int(response.headers.get('Content-Length', 0))
+            if file_size == 0:
+                raise ValueError("Content-Length is zero or not provided.")
+            return file_size
+        except (requests.RequestException, ValueError):
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            file_size = 0
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    file_size += len(chunk)
+            return file_size
+
+    def on_unit_downloaded(self, bytes_downloaded):
+        elapsed_time = time.time() - self.start_time
+        total_downloaded_mb = self.total_downloaded / self.ONE_MB
+        elapsed_time_formatted = time.strftime("%H hours %M minutes %S seconds", time.gmtime(elapsed_time))
+        log_message = f"{total_downloaded_mb:.2f} MB downloaded in {elapsed_time_formatted}"
+        self.progress_bar.logging(log_message)
+
+    def download_file(self, url, output_path):
+        file_size = self.get_file_size(url)
+        if file_size == 0:
+            print("Failed to get file size.")
+            return
+        unit_multiplier = self.ONE_MB
+        total_units = file_size / unit_multiplier
+        self.progress_bar.total = total_units
+        self.progress_bar.start()
+        try:
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            print(f"Error occurred during download: {e}")
+            return
+        downloaded = 0
+        self.total_downloaded = 0 
+        self.start_time = time.time()
+        with open(output_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+                    chunk_size = len(chunk)
+                    downloaded += chunk_size
+                    self.total_downloaded += chunk_size
+                    self.on_unit_downloaded(downloaded)
+                    self.progress_bar.update(downloaded / unit_multiplier)
+                    downloaded = 0
+            if downloaded > 0:
+                self.on_unit_downloaded(downloaded)
+        self.progress_bar.finish()
 
 def load_repository():
     response = requests.get(GITHUB_REPO_URL)
@@ -50,13 +122,14 @@ def install_package(package_name):
         system_platform = platform.system().lower()
         for version, details in package['versions'].items():
             if system_platform in [p.lower() for p in details['platforms']]:
-                os.system(f"curl -LO {details['url']}")
+                downloader = Downloader()
+                downloader.download_file(details['url'], output_path=os.path.basename(details['url']))
                 if details['type'] == 'binary':
                     os.system(f"chmod +x {os.path.basename(details['url'])}")
                     os.system(f"./{os.path.basename(details['url'])}")
                     os.remove(f"./{os.path.basename(details['url'])}")
                 elif details['type'] == 'python':
-                    os.system(f"python3 {os.path.basename(details['url'])}")
+                    os.system(f"{sys.executable} {os.path.basename(details['url'])}")
                     os.remove(f"./{os.path.basename(details['url'])}")
                 print(f"{ColorCodes['Green']}(+) Package '{package_name}' installed.{ColorCodes['Reset']}")
                 return
@@ -74,7 +147,8 @@ def install_package_by_version(package_name,wantversion):
             if wantversion == version:
 
                 if system_platform in [p.lower() for p in details['platforms']]:
-                    os.system(f"curl -LO {details['url']}")
+                    downloader = Downloader()
+                    downloader.download_file(details['url'], output_path=os.path.basename(details['url']))
                     if details['type'] == 'binary':
                         os.system(f"chmod +x {os.path.basename(details['url'])}")
                         os.system(f"./{os.path.basename(details['url'])}")
@@ -93,7 +167,8 @@ def uninstall_package(package_name):
     if package:
         uninstall_url = package.get('uninstall_url')
         if uninstall_url:
-            os.system(f"curl -LO {uninstall_url}")
+            downloader = Downloader()
+            downloader.download_file(uninstall_url, output_path=os.path.basename(uninstall_url))
             os.system(f"chmod +x {os.path.basename(uninstall_url)}")
             os.system(f"./{os.path.basename(uninstall_url)}")
             print(f"{ColorCodes['Green']}(+) Package '{package_name}' uninstalled.{ColorCodes['Reset']}")
